@@ -1,6 +1,5 @@
 // monthly.js — month navigation and personal income auto-calculation
 
-// Track which month is being viewed. Start at current month.
 let viewedYear = new Date().getFullYear();
 let viewedMonth = new Date().getMonth(); // 0 = January, 11 = December
 
@@ -26,7 +25,6 @@ document.getElementById('btn-next-month').addEventListener('click', function () 
   updateMonthLabel();
 });
 
-// Auto-calculate personal income as: total income - (ROI + buffer + forward)
 function recalculatePersonalIncome() {
   const totalIncome = parseFloat(document.getElementById('monthly-income').dataset.raw) || 0;
   const roi = parseFloat(document.getElementById('alloc-roi').value) || 0;
@@ -36,10 +34,20 @@ function recalculatePersonalIncome() {
   const allocated = roi + buffer + forward;
   const personal = totalIncome - allocated;
 
-  document.getElementById('monthly-allocated').textContent = '₹' + allocated.toLocaleString('en-IN');
-  document.getElementById('monthly-unallocated').textContent = '₹' + Math.max(0, personal).toLocaleString('en-IN');
-  document.getElementById('alloc-personal').textContent = '₹' + personal.toLocaleString('en-IN');
+  document.getElementById('monthly-allocated').textContent = '$' + allocated.toLocaleString('en-US');
+  document.getElementById('monthly-unallocated').textContent = '$' + Math.max(0, personal).toLocaleString('en-US');
+  document.getElementById('alloc-personal').textContent = '$' + personal.toLocaleString('en-US');
   document.getElementById('alloc-personal').style.color = personal < 0 ? '#c0392b' : '#155724';
+
+  // Check against minimum salary set in settings
+  const minSalary = parseFloat(localStorage.getItem('minSalary')) || 0;
+  const warning = document.getElementById('salary-warning');
+  if (minSalary > 0 && personal < minSalary) {
+    document.getElementById('salary-warning-amount').textContent = minSalary.toLocaleString('en-US');
+    warning.style.display = 'block';
+  } else {
+    warning.style.display = 'none';
+  }
 }
 
 ['alloc-roi', 'alloc-buffer', 'alloc-forward'].forEach(function (id) {

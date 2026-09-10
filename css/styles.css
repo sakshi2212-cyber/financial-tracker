@@ -390,3 +390,14 @@ body {
   color: #aaa;
   margin-left: 10px;
 }
+
+/* ── Salary Warning ── */
+.salary-warning {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
