@@ -245,6 +245,15 @@ body {
   margin-top: 8px;
 }
 
+/* ── Section Label ── */
+.section-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #999;
+  margin-bottom: 12px;
+}
+
 /* ── Data Table ── */
 .data-table {
   width: 100%;
@@ -390,6 +399,8 @@ body {
   color: #aaa;
   margin-left: 10px;
 }
+
+.text-danger { color: #c0392b; font-weight: 500; }
 
 /* ── Salary Warning ── */
 .salary-warning {
