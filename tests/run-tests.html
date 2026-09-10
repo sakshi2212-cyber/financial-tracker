@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Migration Tests</title>
+  <style>
+    body { font-family: monospace; padding: 32px; background: #1e1e1e; color: #ccc; }
+    h1   { color: white; margin-bottom: 24px; font-size: 1.1rem; }
+    .pass { color: #4caf50; }
+    .fail { color: #f44336; }
+    .summary { margin-top: 24px; font-size: 1rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Migration Tests</h1>
+  <div id="output"></div>
+
+  <script src="../js/migrations.js"></script>
+  <script src="migration.test.js"></script>
+  <script>
+    var output = document.getElementById('output');
+    var report = MigrationTests.runAll();
+
+    report.results.forEach(function (r) {
+      var line = document.createElement('div');
+      line.className = r.ok ? 'pass' : 'fail';
+      line.textContent = (r.ok ? '✓ ' : '✗ ') + r.description;
+      output.appendChild(line);
+    });
+
+    var summary = document.createElement('div');
+    summary.className = 'summary ' + (report.failed === 0 ? 'pass' : 'fail');
+    summary.textContent = report.passed + ' passed, ' + report.failed + ' failed';
+    output.appendChild(summary);
+  </script>
+</body>
+</html>

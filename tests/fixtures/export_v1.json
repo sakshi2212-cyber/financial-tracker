@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "exportedAt": "2026-09-10T10:00:00.000Z",
+  "orders": [
+    {
+      "id": 1,
+      "date": "2026-09-01",
+      "customer": "Emma",
+      "description": "Custom name stickers x 5",
+      "amount": 15,
+      "paymentMethod": "Cash",
+      "status": "Paid"
+    },
+    {
+      "id": 2,
+      "date": "2026-09-05",
+      "customer": "Liam",
+      "description": "Animal sticker pack",
+      "amount": 20,
+      "paymentMethod": "UPI",
+      "status": "Paid"
+    }
+  ],
+  "investments": [
+    {
+      "id": 1,
+      "date": "2026-08-01",
+      "category": "Initial Setup",
+      "description": "Vinyl rolls A4 x 50 sheets",
+      "amount": 40
+    }
+  ],
+  "monthlyAllocations": [
+    {
+      "monthKey": "2026-09",
+      "roi": 10,
+      "buffer": 5,
+      "forward": 10
+    }
+  ]
+}
