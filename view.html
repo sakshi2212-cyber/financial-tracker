@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sticker Tracker — Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body {
+      display: block;
+      background: #f0f2f5;
+      padding: 0;
+    }
+
+    .view-header {
+      background: #2c3e50;
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .view-header h1 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .view-header .meta {
+      font-size: 0.8rem;
+      color: #bdc3c7;
+    }
+
+    .readonly-badge {
+      background: #3d5166;
+      color: #bdc3c7;
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 10px;
+      margin-left: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .view-body {
+      padding: 32px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .error-state, .loading-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="view-header">
+    <div>
+      <h1>Sticker Business Tracker <span class="readonly-badge">Read Only</span></h1>
+    </div>
+    <div class="meta" id="published-at">Loading...</div>
+  </header>
+
+  <div class="view-body">
+
+    <div id="loading-state" class="loading-state">Loading latest snapshot...</div>
+    <div id="error-state"   class="error-state"   style="display:none"></div>
+
+    <div id="view-content" style="display:none">
+      <div class="cards">
+        <div class="card">
+          <div class="card-label">Total Invested</div>
+          <div class="card-value" id="v-total-invested">$0</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Total Income</div>
+          <div class="card-value" id="v-total-income">$0</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Investment Recovered</div>
+          <div class="card-value" id="v-recovered">$0</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Cash Buffer</div>
+          <div class="card-value" id="v-cash-buffer">$0</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Forward Investment</div>
+          <div class="card-value" id="v-forward-investment">$0</div>
+        </div>
+      </div>
+
+      <div class="section-label">Monthly Breakdown</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Income</th>
+            <th>ROI</th>
+            <th>Cash Buffer</th>
+            <th>Forward Inv.</th>
+            <th>Personal Income</th>
+          </tr>
+        </thead>
+        <tbody id="v-monthly-tbody">
+          <tr class="empty-row">
+            <td colspan="6">No monthly data yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    var MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    function fmt(n) {
+      return '$' + (n || 0).toLocaleString('en-US');
+    }
+
+    function formatMonthKey(monthKey) {
+      var parts = monthKey.split('-');
+      return MONTH_ABBR[parseInt(parts[1]) - 1] + ' ' + parts[0];
+    }
+
+    function renderView(data) {
+      // ── Published timestamp ───────────────────────────────────────────────
+      if (data.publishedAt) {
+        var d = new Date(data.publishedAt);
+        document.getElementById('published-at').textContent =
+          'Last updated: ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+          ' at ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      }
+
+      var orders      = data.orders      || [];
+      var investments = data.investments || [];
+      var allocations = data.monthlyAllocations || [];
+
+      // ── Summary cards ─────────────────────────────────────────────────────
+      var totalInvested  = investments.reduce(function (s, i) { return s + i.amount; }, 0);
+      var totalIncome    = orders.filter(function (o) { return o.status === 'Paid'; })
+                                 .reduce(function (s, o) { return s + o.amount; }, 0);
+      var totalRecovered = allocations.reduce(function (s, a) { return s + (a.roi    || 0); }, 0);
+      var totalBuffer    = allocations.reduce(function (s, a) { return s + (a.buffer || 0); }, 0);
+      var totalForward   = allocations.reduce(function (s, a) { return s + (a.forward|| 0); }, 0);
+
+      document.getElementById('v-total-invested').textContent  = fmt(totalInvested);
+      document.getElementById('v-total-income').textContent    = fmt(totalIncome);
+      document.getElementById('v-recovered').textContent       = fmt(totalRecovered);
+      document.getElementById('v-cash-buffer').textContent     = fmt(totalBuffer);
+      document.getElementById('v-forward-investment').textContent = fmt(totalForward);
+
+      // ── Monthly breakdown ─────────────────────────────────────────────────
+      var allocMap  = {};
+      allocations.forEach(function (a) { allocMap[a.monthKey] = a; });
+
+      var monthSet = {};
+      orders.forEach(function (o) { if (o.date) { monthSet[o.date.substring(0, 7)] = true; } });
+      allocations.forEach(function (a) { monthSet[a.monthKey] = true; });
+
+      var months = Object.keys(monthSet).sort().reverse();
+      var tbody  = document.getElementById('v-monthly-tbody');
+      tbody.innerHTML = '';
+
+      if (months.length === 0) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No monthly data yet.</td></tr>';
+        return;
+      }
+
+      months.forEach(function (monthKey) {
+        var monthIncome = orders
+          .filter(function (o) { return o.status === 'Paid' && o.date.startsWith(monthKey + '-'); })
+          .reduce(function (s, o) { return s + o.amount; }, 0);
+
+        var alloc    = allocMap[monthKey] || { roi: 0, buffer: 0, forward: 0 };
+        var roi      = alloc.roi    || 0;
+        var buffer   = alloc.buffer || 0;
+        var forward  = alloc.forward|| 0;
+        var personal = monthIncome - (roi + buffer + forward);
+
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td><strong>' + formatMonthKey(monthKey) + '</strong></td>' +
+          '<td>' + fmt(monthIncome) + '</td>' +
+          '<td>' + fmt(roi)         + '</td>' +
+          '<td>' + fmt(buffer)      + '</td>' +
+          '<td>' + fmt(forward)     + '</td>' +
+          '<td class="' + (personal < 0 ? 'text-danger' : '') + '">' + fmt(personal) + '</td>';
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ── Fetch snapshot from GitHub raw content ────────────────────────────────
+    // ?t= is a cache buster so the browser always fetches the latest version
+    var snapshotUrl = 'https://raw.githubusercontent.com/sakshi2212-cyber/financial-tracker/main/snapshot.json?t=' + Date.now();
+
+    fetch(snapshotUrl)
+      .then(function (res) {
+        if (!res.ok) { throw new Error('Snapshot not found. Has it been published yet?'); }
+        return res.json();
+      })
+      .then(function (data) {
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('view-content').style.display  = 'block';
+        renderView(data);
+      })
+      .catch(function (err) {
+        document.getElementById('loading-state').style.display = 'none';
+        var errEl = document.getElementById('error-state');
+        errEl.style.display = 'block';
+        errEl.textContent   = err.message;
+      });
+  </script>
+
+</body>
+</html>

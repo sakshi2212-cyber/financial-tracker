@@ -280,6 +280,26 @@
       </div>
 
       <div class="settings-section">
+        <h3>Share Dashboard (Read-Only View)</h3>
+        <p>Publish a snapshot of your dashboard to a fixed URL that family can bookmark and check anytime — no login or import needed.</p>
+        <p>Requires a one-time GitHub Personal Access Token saved below. Once published, the read-only view is always at:<br/>
+          <a href="https://sakshi2212-cyber.github.io/financial-tracker/view.html" target="_blank" class="view-link">
+            sakshi2212-cyber.github.io/financial-tracker/view.html
+          </a>
+        </p>
+        <div class="form-group" style="max-width: 360px; margin-top: 12px;">
+          <label for="setting-token">GitHub Personal Access Token</label>
+          <input type="password" id="setting-token" placeholder="ghp_..." autocomplete="off" />
+        </div>
+        <button class="btn-secondary" id="btn-save-token">Save Token</button>
+        <span id="token-saved-msg" style="display:none; margin-left:10px; font-size:0.83rem; color:#27ae60;">Saved!</span>
+        <div style="margin-top: 16px;">
+          <button class="btn-primary" id="btn-publish">Publish Snapshot</button>
+          <span id="last-published-msg" class="file-hint"></span>
+        </div>
+      </div>
+
+      <div class="settings-section">
         <h3>Backup Your Data</h3>
         <p>Downloads all your orders, investments, and monthly allocations as a single JSON file. Save this file to Google Drive or any safe location.</p>
         <button class="btn-primary" id="btn-export">Export Backup</button>
@@ -304,13 +324,13 @@
 
   </main>
 
-  <script src="js/db.js?v=4"></script>
-  <script src="js/migrations.js?v=4"></script>
-  <script src="js/pages/dashboard.js?v=4"></script>
-  <script src="js/pages/orders.js?v=4"></script>
-  <script src="js/pages/investments.js?v=4"></script>
-  <script src="js/pages/monthly.js?v=4"></script>
-  <script src="js/pages/settings.js?v=4"></script>
-  <script src="js/app.js?v=4"></script>
+  <script src="js/db.js?v=5"></script>
+  <script src="js/migrations.js?v=5"></script>
+  <script src="js/pages/dashboard.js?v=5"></script>
+  <script src="js/pages/orders.js?v=5"></script>
+  <script src="js/pages/investments.js?v=5"></script>
+  <script src="js/pages/monthly.js?v=5"></script>
+  <script src="js/pages/settings.js?v=5"></script>
+  <script src="js/app.js?v=5"></script>
 </body>
 </html>

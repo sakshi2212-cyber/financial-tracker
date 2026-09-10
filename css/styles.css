@@ -394,6 +394,12 @@ body {
   cursor: pointer;
 }
 
+.view-link {
+  font-size: 0.83rem;
+  color: #27ae60;
+  word-break: break-all;
+}
+
 .file-hint {
   font-size: 0.8rem;
   color: #aaa;
