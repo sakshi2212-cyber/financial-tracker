@@ -22,30 +22,252 @@
   </nav>
 
   <main class="content">
+
+    <!-- ── Dashboard ── -->
     <div id="page-dashboard" class="page active">
-      <h2>Dashboard</h2>
-      <p>Overview of your sticker business finances will appear here.</p>
+      <div class="page-header">
+        <h2>Dashboard</h2>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-label">Total Invested</div>
+          <div class="card-value" id="stat-total-invested">₹0</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Total Income</div>
+          <div class="card-value" id="stat-total-income">₹0</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Investment Recovered</div>
+          <div class="card-value" id="stat-recovered">₹0</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Cash Buffer</div>
+          <div class="card-value" id="stat-cash-buffer">₹0</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Forward Investment</div>
+          <div class="card-value" id="stat-forward-investment">₹0</div>
+        </div>
+      </div>
     </div>
 
+    <!-- ── Orders ── -->
     <div id="page-orders" class="page">
-      <h2>Orders</h2>
-      <p>Add and view customer orders here.</p>
+      <div class="page-header">
+        <h2>Orders</h2>
+        <button class="btn-primary" id="btn-show-order-form">+ Add Order</button>
+      </div>
+
+      <div class="form-card" id="form-add-order" style="display:none">
+        <h3>New Order</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="order-date">Date</label>
+            <input type="date" id="order-date" />
+          </div>
+          <div class="form-group">
+            <label for="order-customer">Customer Name <span class="optional">(optional)</span></label>
+            <input type="text" id="order-customer" placeholder="e.g. Priya" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="order-description">Description</label>
+          <input type="text" id="order-description" placeholder="e.g. Custom name stickers x 5" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="order-amount">Amount (₹)</label>
+            <input type="number" id="order-amount" placeholder="0" min="0" />
+          </div>
+          <div class="form-group">
+            <label for="order-payment">Payment Method</label>
+            <select id="order-payment">
+              <option value="Cash">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="order-status">Status</label>
+            <select id="order-status">
+              <option value="Paid">Paid</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" id="btn-save-order">Save Order</button>
+          <button class="btn-secondary" id="btn-cancel-order">Cancel</button>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Payment</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="orders-tbody">
+          <tr class="empty-row">
+            <td colspan="6">No orders yet. Click "+ Add Order" to get started.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
+    <!-- ── Investments ── -->
     <div id="page-investments" class="page">
-      <h2>Investments</h2>
-      <p>Track money you have put into the business here.</p>
+      <div class="page-header">
+        <h2>Investments</h2>
+        <button class="btn-primary" id="btn-show-investment-form">+ Add Investment</button>
+      </div>
+
+      <div class="form-card" id="form-add-investment" style="display:none">
+        <h3>New Investment</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="investment-date">Date</label>
+            <input type="date" id="investment-date" />
+          </div>
+          <div class="form-group">
+            <label for="investment-category">Category</label>
+            <select id="investment-category">
+              <option value="Initial Setup">Initial Setup</option>
+              <option value="Materials">Materials</option>
+              <option value="Equipment">Equipment</option>
+              <option value="Upgrade">Upgrade</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="investment-description">Description</label>
+          <input type="text" id="investment-description" placeholder="e.g. Vinyl rolls A4 x 50 sheets" />
+        </div>
+        <div class="form-group">
+          <label for="investment-amount">Amount (₹)</label>
+          <input type="number" id="investment-amount" placeholder="0" min="0" />
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" id="btn-save-investment">Save Investment</button>
+          <button class="btn-secondary" id="btn-cancel-investment">Cancel</button>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="investments-tbody">
+          <tr class="empty-row">
+            <td colspan="4">No investments recorded yet. Click "+ Add Investment" to get started.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
+    <!-- ── Monthly Summary ── -->
     <div id="page-monthly" class="page">
-      <h2>Monthly Summary</h2>
-      <p>View and allocate monthly income here.</p>
+      <div class="page-header">
+        <h2>Monthly Summary</h2>
+      </div>
+
+      <div class="month-selector">
+        <button class="btn-icon" id="btn-prev-month">&#8592;</button>
+        <span id="current-month-label">September 2026</span>
+        <button class="btn-icon" id="btn-next-month">&#8594;</button>
+      </div>
+
+      <div class="cards" style="margin-top: 20px;">
+        <div class="card">
+          <div class="card-label">Income This Month</div>
+          <div class="card-value" id="monthly-income">₹0</div>
+          <div class="card-note">from orders</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Allocated</div>
+          <div class="card-value" id="monthly-allocated">₹0</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Unallocated</div>
+          <div class="card-value" id="monthly-unallocated">₹0</div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <h3>Income Allocation</h3>
+        <p class="form-description">Decide how to split this month's income across the four buckets. Personal Income is calculated automatically from what is left over.</p>
+
+        <div class="allocation-grid">
+          <div class="form-group">
+            <label for="alloc-roi">Return on Investment (₹)</label>
+            <input type="number" id="alloc-roi" placeholder="0" min="0" />
+            <div class="field-hint">Paying back your initial investment to yourself</div>
+          </div>
+          <div class="form-group">
+            <label for="alloc-buffer">Cash Buffer (₹)</label>
+            <input type="number" id="alloc-buffer" placeholder="0" min="0" />
+            <div class="field-hint">Emergency and reserve fund</div>
+          </div>
+          <div class="form-group">
+            <label for="alloc-forward">Forward Investment (₹)</label>
+            <input type="number" id="alloc-forward" placeholder="0" min="0" />
+            <div class="field-hint">Set aside for materials and upgrades</div>
+          </div>
+          <div class="form-group">
+            <label>Personal Income (₹)</label>
+            <div class="personal-income-display">
+              <div class="value" id="alloc-personal">₹0</div>
+              <div class="label">auto-calculated</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-primary" id="btn-save-allocation">Save Allocation</button>
+        </div>
+      </div>
     </div>
 
+    <!-- ── Settings ── -->
     <div id="page-settings" class="page">
-      <h2>Settings</h2>
-      <p>Export and import your data here.</p>
+      <div class="page-header">
+        <h2>Settings</h2>
+      </div>
+
+      <div class="settings-section">
+        <h3>Backup Your Data</h3>
+        <p>Downloads all your orders, investments, and monthly allocations as a single JSON file. Save this file to Google Drive or any safe location.</p>
+        <button class="btn-primary" id="btn-export">Export Backup</button>
+      </div>
+
+      <div class="settings-section">
+        <h3>Restore From Backup</h3>
+        <p>Import a previously exported JSON file to restore your data. This will replace all current data in the app.</p>
+        <label class="btn-secondary btn-file-label" for="input-import">Choose Backup File</label>
+        <input type="file" id="input-import" accept=".json" style="display:none" />
+        <span id="import-filename" class="file-hint">No file chosen</span>
+        <div style="margin-top: 12px;">
+          <button class="btn-primary" id="btn-import" disabled>Import</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>About</h3>
+        <p>Sticker Business Tracker<br/>Data schema version: <strong>1</strong></p>
+      </div>
     </div>
+
   </main>
 
   <script src="js/db.js"></script>
