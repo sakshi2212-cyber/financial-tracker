@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sticker Business Tracker</title>
   <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -51,24 +52,33 @@
         </div>
       </div>
 
-      <div class="section-label">Monthly Breakdown</div>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Month</th>
-            <th>Income</th>
-            <th>ROI</th>
-            <th>Cash Buffer</th>
-            <th>Forward Inv.</th>
-            <th>Personal Income</th>
-          </tr>
-        </thead>
-        <tbody id="monthly-breakdown-tbody">
-          <tr class="empty-row">
-            <td colspan="6">No data yet. Add orders and monthly allocations to see the breakdown.</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="chart-card">
+        <div class="section-label">Monthly Income vs Material Costs</div>
+        <canvas id="monthly-chart" height="110"></canvas>
+      </div>
+
+      <div class="section-label" style="margin-top:24px;">Monthly Breakdown</div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Income</th>
+              <th>Mat. Costs</th>
+              <th>Margin</th>
+              <th>ROI</th>
+              <th>Cash Buffer</th>
+              <th>Forward Inv.</th>
+              <th>Personal Income</th>
+            </tr>
+          </thead>
+          <tbody id="monthly-breakdown-tbody">
+            <tr class="empty-row">
+              <td colspan="8">No data yet. Add orders and monthly allocations to see the breakdown.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- ── Orders ── -->
@@ -121,23 +131,25 @@
         </div>
       </div>
 
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Customer</th>
-            <th>Description</th>
-            <th>Amount</th>
-            <th>Payment</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="orders-tbody">
-          <tr class="empty-row">
-            <td colspan="6">No orders yet. Click "+ Add Order" to get started.</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Payment</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="orders-tbody">
+            <tr class="empty-row">
+              <td colspan="6">No orders yet. Click "+ Add Order" to get started.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- ── Investments ── -->
@@ -178,21 +190,23 @@
         </div>
       </div>
 
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody id="investments-tbody">
-          <tr class="empty-row">
-            <td colspan="4">No investments recorded yet. Click "+ Add Investment" to get started.</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody id="investments-tbody">
+            <tr class="empty-row">
+              <td colspan="4">No investments recorded yet. Click "+ Add Investment" to get started.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- ── Monthly Summary ── -->
@@ -324,13 +338,13 @@
 
   </main>
 
-  <script src="js/db.js?v=5"></script>
-  <script src="js/migrations.js?v=5"></script>
-  <script src="js/pages/dashboard.js?v=5"></script>
-  <script src="js/pages/orders.js?v=5"></script>
-  <script src="js/pages/investments.js?v=5"></script>
-  <script src="js/pages/monthly.js?v=5"></script>
-  <script src="js/pages/settings.js?v=5"></script>
-  <script src="js/app.js?v=5"></script>
+  <script src="js/db.js?v=6"></script>
+  <script src="js/migrations.js?v=6"></script>
+  <script src="js/pages/dashboard.js?v=6"></script>
+  <script src="js/pages/orders.js?v=6"></script>
+  <script src="js/pages/investments.js?v=6"></script>
+  <script src="js/pages/monthly.js?v=6"></script>
+  <script src="js/pages/settings.js?v=6"></script>
+  <script src="js/app.js?v=6"></script>
 </body>
 </html>
