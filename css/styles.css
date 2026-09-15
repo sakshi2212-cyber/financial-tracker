@@ -1,3 +1,19 @@
+/* ── Theme ────────────────────────────────────────────────────────────────────
+   Purple + Cinnamon palette.
+   UI chrome (sidebar, buttons, focus) uses purple.
+   Money-positive indicators (paid badge, margin, personal income) stay green.
+   ── */
+:root {
+  --purple-deep:    #2d1b69;
+  --purple-mid:     #4a2d8f;
+  --purple-bright:  #7b2fbe;
+  --purple-hover:   #6a28a8;
+  --purple-light:   #f3e5ff;
+  --purple-pale:    #f8f5ff;
+  --purple-text:    #c9b8ff;
+  --purple-heading: #2d1b69;
+}
+
 /* ── Reset & Base ── */
 * {
   margin: 0;
@@ -9,14 +25,14 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   display: flex;
   height: 100vh;
-  background: #f0f2f5;
+  background: var(--purple-pale);
   color: #333;
 }
 
 /* ── Sidebar ── */
 .sidebar {
   width: 220px;
-  background: #2c3e50;
+  background: var(--purple-deep);
   color: white;
   display: flex;
   flex-direction: column;
@@ -25,13 +41,13 @@ body {
 
 .sidebar-header {
   padding: 24px 20px;
-  border-bottom: 1px solid #3d5166;
+  border-bottom: 1px solid var(--purple-mid);
 }
 
 .sidebar-header h1 {
   font-size: 1rem;
   font-weight: 600;
-  color: #ecf0f1;
+  color: #e8e0ff;
 }
 
 .nav-links {
@@ -42,7 +58,7 @@ body {
 .nav-links a {
   display: block;
   padding: 12px 20px;
-  color: #bdc3c7;
+  color: var(--purple-text);
   text-decoration: none;
   font-size: 0.9rem;
   transition: background 0.15s, color 0.15s;
@@ -50,7 +66,7 @@ body {
 
 .nav-links a:hover,
 .nav-links a.active {
-  background: #3d5166;
+  background: var(--purple-mid);
   color: white;
 }
 
@@ -61,13 +77,8 @@ body {
   overflow-y: auto;
 }
 
-.page {
-  display: none;
-}
-
-.page.active {
-  display: block;
-}
+.page        { display: none; }
+.page.active { display: block; }
 
 /* ── Page Header ── */
 .page-header {
@@ -79,7 +90,7 @@ body {
 
 .page-header h2 {
   font-size: 1.4rem;
-  color: #2c3e50;
+  color: var(--purple-heading);
 }
 
 /* ── Stat Cards ── */
@@ -94,7 +105,7 @@ body {
   background: white;
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  box-shadow: 0 1px 6px rgba(45, 27, 105, 0.08);
 }
 
 .card-label {
@@ -108,7 +119,7 @@ body {
 .card-value {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--purple-heading);
 }
 
 .card-note {
@@ -119,7 +130,7 @@ body {
 
 /* ── Buttons ── */
 .btn-primary {
-  background: #27ae60;
+  background: var(--purple-bright);
   color: white;
   border: none;
   padding: 9px 18px;
@@ -130,14 +141,8 @@ body {
   transition: background 0.15s;
 }
 
-.btn-primary:hover {
-  background: #219a52;
-}
-
-.btn-primary:disabled {
-  background: #a8d5bc;
-  cursor: not-allowed;
-}
+.btn-primary:hover    { background: var(--purple-hover); }
+.btn-primary:disabled { background: #c9a0ff; cursor: not-allowed; }
 
 .btn-secondary {
   background: white;
@@ -150,9 +155,7 @@ body {
   transition: background 0.15s;
 }
 
-.btn-secondary:hover {
-  background: #f5f5f5;
-}
+.btn-secondary:hover { background: #f5f5f5; }
 
 .btn-icon {
   background: white;
@@ -165,23 +168,21 @@ body {
   transition: background 0.15s;
 }
 
-.btn-icon:hover {
-  background: #f5f5f5;
-}
+.btn-icon:hover { background: #f5f5f5; }
 
 /* ── Form Card ── */
 .form-card {
   background: white;
   border-radius: 10px;
   padding: 24px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  box-shadow: 0 1px 6px rgba(45, 27, 105, 0.08);
   margin-bottom: 24px;
   max-width: 640px;
 }
 
 .form-card h3 {
   margin-bottom: 6px;
-  color: #2c3e50;
+  color: var(--purple-heading);
   font-size: 1rem;
 }
 
@@ -198,9 +199,7 @@ body {
   gap: 16px;
 }
 
-.form-group {
-  margin-bottom: 16px;
-}
+.form-group          { margin-bottom: 16px; }
 
 .form-group label {
   display: block;
@@ -230,7 +229,7 @@ body {
 
 .form-group input:focus,
 .form-group select:focus {
-  border-color: #27ae60;
+  border-color: var(--purple-bright);
 }
 
 .field-hint {
@@ -261,7 +260,7 @@ body {
   background: white;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  box-shadow: 0 1px 6px rgba(45, 27, 105, 0.08);
 }
 
 .data-table th {
@@ -282,13 +281,8 @@ body {
   color: #444;
 }
 
-.data-table tr:last-child td {
-  border-bottom: none;
-}
-
-.data-table tbody tr:hover td {
-  background: #fafafa;
-}
+.data-table tr:last-child td    { border-bottom: none; }
+.data-table tbody tr:hover td   { background: #fdf9ff; }
 
 .empty-row td {
   text-align: center;
@@ -306,20 +300,9 @@ body {
   font-weight: 500;
 }
 
-.badge-paid {
-  background: #d4edda;
-  color: #155724;
-}
-
-.badge-pending {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.badge-category {
-  background: #e8f4fd;
-  color: #1a6a9a;
-}
+.badge-paid     { background: #d4edda; color: #155724; }
+.badge-pending  { background: #fff3cd; color: #856404; }
+.badge-category { background: var(--purple-light); color: var(--purple-mid); }
 
 /* ── Month Selector ── */
 .month-selector {
@@ -332,7 +315,7 @@ body {
 .month-selector span {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--purple-heading);
   min-width: 160px;
   text-align: center;
 }
@@ -345,8 +328,8 @@ body {
 }
 
 .personal-income-display {
-  background: #f0faf4;
-  border: 1px solid #a8d5bc;
+  background: var(--purple-light);
+  border: 1px solid #c9a0ff;
   border-radius: 6px;
   padding: 10px 14px;
   height: 38px;
@@ -363,7 +346,7 @@ body {
 
 .personal-income-display .label {
   font-size: 0.72rem;
-  color: #27ae60;
+  color: var(--purple-bright);
 }
 
 /* ── Settings ── */
@@ -371,14 +354,14 @@ body {
   background: white;
   border-radius: 10px;
   padding: 24px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  box-shadow: 0 1px 6px rgba(45, 27, 105, 0.08);
   margin-bottom: 16px;
   max-width: 520px;
 }
 
 .settings-section h3 {
   margin-bottom: 8px;
-  color: #2c3e50;
+  color: var(--purple-heading);
   font-size: 1rem;
 }
 
@@ -389,14 +372,11 @@ body {
   line-height: 1.6;
 }
 
-.btn-file-label {
-  display: inline-block;
-  cursor: pointer;
-}
+.btn-file-label { display: inline-block; cursor: pointer; }
 
 .view-link {
   font-size: 0.83rem;
-  color: #27ae60;
+  color: var(--purple-bright);
   word-break: break-all;
 }
 
@@ -414,11 +394,11 @@ body {
   background: white;
   border-radius: 10px;
   padding: 20px 20px 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  box-shadow: 0 1px 6px rgba(45, 27, 105, 0.08);
   margin-bottom: 24px;
 }
 
-/* ── Table scroll wrapper (enables horizontal scroll on mobile) ── */
+/* ── Table scroll wrapper ── */
 .table-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -443,7 +423,6 @@ body {
     min-height: 100vh;
   }
 
-  /* Sidebar becomes a horizontal tab bar at the top */
   .sidebar {
     width: 100%;
     flex-direction: column;
@@ -459,7 +438,7 @@ body {
     flex-direction: row;
     overflow-x: auto;
     padding: 0;
-    border-top: 1px solid #3d5166;
+    border-top: 1px solid var(--purple-mid);
     -webkit-overflow-scrolling: touch;
   }
 
@@ -475,25 +454,16 @@ body {
   .nav-links a:hover,
   .nav-links a.active {
     background: transparent;
-    border-bottom-color: #27ae60;
+    border-bottom-color: var(--purple-bright);
     color: white;
   }
 
-  /* Content area */
-  .content { padding: 16px; }
-
-  /* Cards: 2 columns on mobile */
-  .cards { grid-template-columns: 1fr 1fr; }
-
-  /* Forms: stack vertically */
+  .content           { padding: 16px; }
+  .cards             { grid-template-columns: 1fr 1fr; }
   .form-row          { grid-template-columns: 1fr; }
   .allocation-grid   { grid-template-columns: 1fr; }
   .form-card         { max-width: 100%; }
   .settings-section  { max-width: 100%; }
-
-  /* Page header: stack button below title on very small screens */
-  .page-header { flex-wrap: wrap; gap: 8px; }
-
-  /* Chart: shorter on mobile */
+  .page-header       { flex-wrap: wrap; gap: 8px; }
   .chart-card canvas { max-height: 200px; }
 }

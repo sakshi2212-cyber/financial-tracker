@@ -167,6 +167,35 @@ To run migration tests: open `tests/run-tests.html` directly in a browser.
 
 ---
 
+## Sharing the Read-Only Dashboard
+
+Family members can view the dashboard at:
+```
+https://sakshi2212-cyber.github.io/financial-tracker/view.html
+```
+
+This page fetches `snapshot.json` from the repo and renders a read-only dashboard. It must be published manually from the Settings page after each update.
+
+### One-time GitHub token setup (do this on the sticker laptop)
+
+1. Go to `github.com` → click your profile picture → **Settings**
+2. Scroll to the bottom of the left sidebar → **Developer settings**
+3. Click **Personal access tokens** → **Fine-grained tokens** → **Generate new token**
+4. Fill in:
+   - **Token name:** `sticker-tracker-publish`
+   - **Expiration:** 1 year
+   - **Repository access:** Only select repositories → choose `financial-tracker`
+   - **Permissions:** Repository permissions → **Contents** → **Read and write**
+5. Click **Generate token** — copy it immediately (shown only once)
+6. In the app → **Settings** → paste token into **GitHub Personal Access Token** → **Save Token**
+
+### Publishing a snapshot
+
+In the app → **Settings** → click **Publish Snapshot**.  
+The `view.html` URL updates within ~1 minute. Publish whenever you want to share fresh numbers.
+
+---
+
 ## Design Decisions
 
 - **No framework** — vanilla JS keeps the build step-free. GitHub Pages serves the files directly.

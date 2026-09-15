@@ -33,13 +33,13 @@ function renderChart(months, incomeData, costData) {
         {
           label: 'Income',
           data: incomeData,
-          backgroundColor: '#27ae60',
+          backgroundColor: '#7b2fbe',
           borderRadius: 4
         },
         {
           label: 'Material Costs',
           data: costData,
-          backgroundColor: '#e74c3c',
+          backgroundColor: '#d4830a',
           borderRadius: 4
         }
       ]
