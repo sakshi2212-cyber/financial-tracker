@@ -12,6 +12,53 @@
   <nav class="sidebar">
     <div class="sidebar-header">
       <h1>🌀 Sticker Tracker</h1>
+      <!-- Original mascot character — cute puppy with cinnamon roll swirl tail -->
+      <svg viewBox="0 0 80 106" xmlns="http://www.w3.org/2000/svg"
+           aria-label="Sticker Tracker mascot"
+           class="sidebar-mascot">
+
+        <!-- Left floppy ear (outer + inner) -->
+        <ellipse cx="20" cy="66" rx="11" ry="28" fill="white" stroke="#DDD6FE" stroke-width="1"
+                 transform="rotate(-12,20,66)"/>
+        <ellipse cx="20" cy="66" rx="7"  ry="21" fill="#F3EEFF" stroke="none"
+                 transform="rotate(-12,20,66)"/>
+
+        <!-- Right floppy ear (outer + inner) -->
+        <ellipse cx="60" cy="66" rx="11" ry="28" fill="white" stroke="#DDD6FE" stroke-width="1"
+                 transform="rotate(12,60,66)"/>
+        <ellipse cx="60" cy="66" rx="7"  ry="21" fill="#F3EEFF" stroke="none"
+                 transform="rotate(12,60,66)"/>
+
+        <!-- Head -->
+        <circle cx="40" cy="42" r="27" fill="white" stroke="#DDD6FE" stroke-width="1"/>
+
+        <!-- Left eye white + pupil + shine -->
+        <circle cx="30" cy="40" r="7.5" fill="white" stroke="#EDE9FE" stroke-width="0.5"/>
+        <circle cx="31" cy="41" r="5"   fill="#2563EB"/>
+        <circle cx="34" cy="37" r="1.5" fill="white"/>
+
+        <!-- Right eye white + pupil + shine -->
+        <circle cx="50" cy="40" r="7.5" fill="white" stroke="#EDE9FE" stroke-width="0.5"/>
+        <circle cx="51" cy="41" r="5"   fill="#2563EB"/>
+        <circle cx="54" cy="37" r="1.5" fill="white"/>
+
+        <!-- Rosy cheeks -->
+        <circle cx="18" cy="51" r="7" fill="#FFB7C5" opacity="0.45"/>
+        <circle cx="62" cy="51" r="7" fill="#FFB7C5" opacity="0.45"/>
+
+        <!-- Nose -->
+        <ellipse cx="40" cy="49" rx="3" ry="2.5" fill="#FFB7C5"/>
+
+        <!-- Smile -->
+        <path d="M35,55 Q40,59 45,55" fill="none" stroke="#FFB7C5"
+              stroke-width="1.5" stroke-linecap="round"/>
+
+        <!-- Cinnamon roll swirl tail -->
+        <path d="M42,94 C47,90 50,84 47,78 C44,72 38,71 34,74
+                 C30,77 30,84 34,88 C38,92 43,91 45,87 C47,83 45,79 42,79"
+              fill="none" stroke="#C4823A" stroke-width="2.5" stroke-linecap="round"/>
+
+      </svg>
     </div>
     <ul class="nav-links">
       <li><a href="#" data-page="dashboard" class="active">Dashboard</a></li>
@@ -338,13 +385,13 @@
 
   </main>
 
-  <script src="js/db.js?v=8"></script>
-  <script src="js/migrations.js?v=8"></script>
-  <script src="js/pages/dashboard.js?v=8"></script>
-  <script src="js/pages/orders.js?v=8"></script>
-  <script src="js/pages/investments.js?v=8"></script>
-  <script src="js/pages/monthly.js?v=8"></script>
-  <script src="js/pages/settings.js?v=8"></script>
-  <script src="js/app.js?v=8"></script>
+  <script src="js/db.js?v=9"></script>
+  <script src="js/migrations.js?v=9"></script>
+  <script src="js/pages/dashboard.js?v=9"></script>
+  <script src="js/pages/orders.js?v=9"></script>
+  <script src="js/pages/investments.js?v=9"></script>
+  <script src="js/pages/monthly.js?v=9"></script>
+  <script src="js/pages/settings.js?v=9"></script>
+  <script src="js/app.js?v=9"></script>
 </body>
 </html>
