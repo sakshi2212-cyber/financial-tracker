@@ -421,6 +421,23 @@ body {
 .text-danger  { color: #DC2626; font-weight: 600; }
 .text-success { color: #059669; font-weight: 600; }
 
+.btn-row-edit {
+  background: none;
+  border: 1px solid #DDD6FE;
+  color: var(--purple-bright);
+  padding: 3px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.btn-row-edit:hover {
+  background: var(--purple-light);
+}
+
 /* ── Chart ── */
 .chart-card {
   background: white;
