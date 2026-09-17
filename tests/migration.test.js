@@ -64,6 +64,25 @@ var MigrationTests = (function () {
     results.push(assert('Empty backup: investments array created',  Array.isArray(migratedEmpty.investments)));
     results.push(assert('Empty backup: allocations array created',  Array.isArray(migratedEmpty.monthlyAllocations)));
 
+    // ── V2 migration: Paid/Pending → new statuses ────────────────────────────
+
+    var v1statuses = {
+      version: 1,
+      orders: [
+        { id: 1, date: '2026-09-01', amount: 15, status: 'Paid',    paymentMethod: 'Cash' },
+        { id: 2, date: '2026-09-02', amount: 20, status: 'Pending', paymentMethod: 'UPI'  }
+      ],
+      investments: [],
+      monthlyAllocations: []
+    };
+
+    var migratedV2 = Migrations.migrate(JSON.parse(JSON.stringify(v1statuses)));
+    results.push(assert('V2: version bumped to 2',                       migratedV2.version === 2));
+    results.push(assert('V2: Paid migrates to Order Shipped',            migratedV2.orders[0].status === 'Order Shipped'));
+    results.push(assert('V2: Pending migrates to Order Received',        migratedV2.orders[1].status === 'Order Received'));
+    results.push(assert('V2: amount preserved through migration',        migratedV2.orders[0].amount === 15));
+    results.push(assert('V2: paymentMethod preserved through migration', migratedV2.orders[1].paymentMethod === 'UPI'));
+
     return { results: results, passed: passed, failed: failed };
   }
 

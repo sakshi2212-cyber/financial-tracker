@@ -5,6 +5,20 @@ function formatDate(dateStr) {
   return parts[1] + '/' + parts[2] + '/' + parts[0];
 }
 
+var STATUS_BADGE = {
+  'Order Received':    'badge-received',
+  'Payment Complete':  'badge-payment-complete',
+  'In Progress':       'badge-in-progress',
+  'Order Shipped':     'badge-shipped',
+  'Paid':              'badge-paid',
+  'Pending':           'badge-pending'
+};
+
+function statusBadge(status) {
+  var cls = STATUS_BADGE[status] || 'badge-received';
+  return '<span class="badge ' + cls + '">' + status + '</span>';
+}
+
 function renderOrders() {
   AppDB.getOrders().then(function (orders) {
     var tbody = document.getElementById('orders-tbody');
@@ -25,7 +39,7 @@ function renderOrders() {
         '<td>' + (order.description || '—') + '</td>' +
         '<td>$' + order.amount.toLocaleString('en-US') + '</td>' +
         '<td>' + order.paymentMethod + '</td>' +
-        '<td><span class="badge badge-' + order.status.toLowerCase() + '">' + order.status + '</span></td>';
+        '<td>' + statusBadge(order.status) + '</td>';
       tbody.appendChild(tr);
     });
   });
@@ -64,8 +78,9 @@ document.getElementById('btn-save-order').addEventListener('click', function () 
     document.getElementById('order-customer').value    = '';
     document.getElementById('order-description').value = '';
     document.getElementById('order-amount').value      = '';
+    document.getElementById('order-status').value      = 'Order Received';
 
-    document.getElementById('form-add-order').style.display          = 'none';
+    document.getElementById('form-add-order').style.display      = 'none';
     document.getElementById('btn-show-order-form').style.display = 'inline-block';
 
     renderOrders();

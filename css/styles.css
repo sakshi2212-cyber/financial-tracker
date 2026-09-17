@@ -326,9 +326,13 @@ body {
   font-weight: 600;
 }
 
-.badge-paid     { background: #D1FAE5; color: #065F46; }
-.badge-pending  { background: #FEF3C7; color: #92400E; }
-.badge-category { background: var(--purple-light); color: var(--purple-mid); }
+.badge-received         { background: #DBEAFE; color: #1D4ED8; }
+.badge-payment-complete { background: #D1FAE5; color: #065F46; }
+.badge-in-progress      { background: #FEF3C7; color: #92400E; }
+.badge-shipped          { background: var(--purple-light); color: var(--purple-mid); }
+.badge-paid             { background: #D1FAE5; color: #065F46; }
+.badge-pending          { background: #DBEAFE; color: #1D4ED8; }
+.badge-category         { background: var(--purple-light); color: var(--purple-mid); }
 
 /* ── Month Selector ── */
 .month-selector {

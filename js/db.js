@@ -106,6 +106,7 @@ var AppDB = (function () {
 
   return {
     addOrder:        function (o) { return addRecord('orders', o); },
+    updateOrder:     function (o) { return putRecord('orders', o); },
     getOrders:       function () { return getAllRecords('orders'); },
     addInvestment:   function (i) { return addRecord('investments', i); },
     getInvestments:  function () { return getAllRecords('investments'); },

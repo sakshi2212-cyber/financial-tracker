@@ -30,7 +30,7 @@ function renderMonthly() {
 
     // Sum paid orders whose date starts with this month
     var totalIncome = orders
-      .filter(function (o) { return o.status === 'Paid' && o.date.startsWith(prefix); })
+      .filter(function (o) { return isPaid(o.status) && o.date.startsWith(prefix); })
       .reduce(function (sum, o) { return sum + o.amount; }, 0);
 
     // Store raw value on the element so recalculate can read it

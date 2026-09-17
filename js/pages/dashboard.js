@@ -70,7 +70,7 @@ function renderDashboard() {
     // ── Summary cards ─────────────────────────────────────────────────────
 
     var totalInvested  = investments.reduce(function (s, i) { return s + i.amount; }, 0);
-    var totalIncome    = orders.filter(function (o) { return o.status === 'Paid'; })
+    var totalIncome    = orders.filter(function (o) { return isPaid(o.status); })
                                .reduce(function (s, o) { return s + o.amount; }, 0);
     var totalRecovered = allocations.reduce(function (s, a) { return s + (a.roi    || 0); }, 0);
     var totalBuffer    = allocations.reduce(function (s, a) { return s + (a.buffer || 0); }, 0);
@@ -112,7 +112,7 @@ function renderDashboard() {
 
     months.forEach(function (monthKey) {
       var monthIncome = orders
-        .filter(function (o) { return o.status === 'Paid' && o.date.startsWith(monthKey + '-'); })
+        .filter(function (o) { return isPaid(o.status) && o.date.startsWith(monthKey + '-'); })
         .reduce(function (s, o) { return s + o.amount; }, 0);
 
       // Only "Materials" category counts as recurring production cost
@@ -143,7 +143,7 @@ function renderDashboard() {
     // Populate chart arrays in chronological order
     chartMonths.forEach(function (monthKey) {
       chartIncome.push(
-        orders.filter(function (o) { return o.status === 'Paid' && o.date.startsWith(monthKey + '-'); })
+        orders.filter(function (o) { return isPaid(o.status) && o.date.startsWith(monthKey + '-'); })
               .reduce(function (s, o) { return s + o.amount; }, 0)
       );
       chartCosts.push(
