@@ -86,16 +86,13 @@
           <div class="card-value" id="stat-total-income">$0</div>
         </div>
         <div class="card">
-          <div class="card-label">Investment Recovered</div>
+          <div class="card-label">Total Returned</div>
           <div class="card-value" id="stat-recovered">$0</div>
+          <div class="card-note" id="stat-recovered-note">of $0 invested</div>
         </div>
         <div class="card">
-          <div class="card-label">Cash Buffer</div>
-          <div class="card-value" id="stat-cash-buffer">$0</div>
-        </div>
-        <div class="card">
-          <div class="card-label">Forward Investment</div>
-          <div class="card-value" id="stat-forward-investment">$0</div>
+          <div class="card-label">Total Savings</div>
+          <div class="card-value" id="stat-savings">$0</div>
         </div>
       </div>
 
@@ -112,16 +109,15 @@
               <th>Month</th>
               <th>Income</th>
               <th>Mat. Costs</th>
-              <th>Margin</th>
-              <th>ROI</th>
-              <th>Cash Buffer</th>
-              <th>Forward Inv.</th>
-              <th>Personal Income</th>
+              <th>Gross Profit</th>
+              <th>Recovery</th>
+              <th>My Pay</th>
+              <th>Savings</th>
             </tr>
           </thead>
           <tbody id="monthly-breakdown-tbody">
             <tr class="empty-row">
-              <td colspan="8">No data yet. Add orders and monthly allocations to see the breakdown.</td>
+              <td colspan="7">No data yet. Add orders and material costs to see the breakdown.</td>
             </tr>
           </tbody>
         </table>
@@ -209,6 +205,27 @@
         <button class="btn-primary" id="btn-show-investment-form">+ Add Investment</button>
       </div>
 
+      <div class="recovery-card">
+        <div class="recovery-row">
+          <div>
+            <div class="card-label">Total Invested</div>
+            <div class="recovery-value" id="inv-total-invested">$0</div>
+          </div>
+          <div>
+            <div class="card-label">Total Returned</div>
+            <div class="recovery-value" id="inv-total-returned">$0</div>
+          </div>
+          <div>
+            <div class="card-label">Still to Recover</div>
+            <div class="recovery-value" id="inv-still-to-recover">$0</div>
+          </div>
+        </div>
+        <div class="recovery-bar-bg">
+          <div class="recovery-bar-fill" id="inv-recovery-bar"></div>
+        </div>
+        <div class="recovery-pct" id="inv-recovery-pct">0% recovered</div>
+      </div>
+
       <div class="form-card" id="form-add-investment" style="display:none">
         <h3>New Investment</h3>
         <div class="form-row">
@@ -271,58 +288,82 @@
         <button class="btn-icon" id="btn-next-month">&#8594;</button>
       </div>
 
-      <div class="cards" style="margin-top: 20px;">
-        <div class="card">
-          <div class="card-label">Income This Month</div>
-          <div class="card-value" id="monthly-income">$0</div>
-          <div class="card-note">from orders</div>
-        </div>
-        <div class="card">
-          <div class="card-label">Allocated</div>
-          <div class="card-value" id="monthly-allocated">$0</div>
-        </div>
-        <div class="card">
-          <div class="card-label">Unallocated</div>
-          <div class="card-value" id="monthly-unallocated">$0</div>
-        </div>
-      </div>
+      <div class="statement-card">
 
-      <div class="form-card">
-        <h3>Income Allocation</h3>
-        <p class="form-description">Decide how to split this month's income across the four buckets. Personal Income is calculated automatically from what is left over.</p>
+        <!-- Income -->
+        <div class="statement-section">
+          <div class="statement-row">
+            <span class="statement-label">Income</span>
+            <span class="statement-value" id="s-income">$0</span>
+          </div>
+          <div class="statement-note" id="s-income-note">from 0 paid orders</div>
+        </div>
 
-        <div class="allocation-grid">
-          <div class="form-group">
-            <label for="alloc-roi">Return on Investment ($)</label>
-            <input type="number" id="alloc-roi" placeholder="0" min="0" />
-            <div class="field-hint">Paying back your initial investment to yourself</div>
+        <div class="statement-divider"></div>
+
+        <!-- Material Costs -->
+        <div class="statement-section">
+          <div class="statement-row">
+            <span class="statement-label">Material Costs</span>
+            <span class="statement-value" id="s-mat-total">$0</span>
           </div>
-          <div class="form-group">
-            <label for="alloc-buffer">Cash Buffer ($)</label>
-            <input type="number" id="alloc-buffer" placeholder="0" min="0" />
-            <div class="field-hint">Emergency and reserve fund</div>
-          </div>
-          <div class="form-group">
-            <label for="alloc-forward">Forward Investment ($)</label>
-            <input type="number" id="alloc-forward" placeholder="0" min="0" />
-            <div class="field-hint">Set aside for materials and upgrades</div>
-          </div>
-          <div class="form-group">
-            <label>Personal Income ($)</label>
-            <div class="personal-income-display">
-              <div class="value" id="alloc-personal">$0</div>
-              <div class="label">auto-calculated</div>
-            </div>
+          <div id="s-materials-list" class="statement-sublist"></div>
+          <button class="btn-add-inline" id="btn-add-material">+ Add Material Cost</button>
+          <div id="form-add-material" class="inline-add-form" style="display:none">
+            <input type="text" id="mat-desc" placeholder="e.g. Vinyl rolls x 20" />
+            <input type="number" id="mat-amount" placeholder="Amount" min="0" />
+            <button class="btn-primary btn-sm" id="btn-save-material">Add</button>
+            <button class="btn-secondary btn-sm" id="btn-cancel-material">Cancel</button>
           </div>
         </div>
 
-        <div id="salary-warning" class="salary-warning" style="display:none">
-          ⚠️ Personal income is below the $<span id="salary-warning-amount">20</span> minimum monthly salary.
+        <div class="statement-divider"></div>
+
+        <!-- Gross Profit -->
+        <div class="statement-row statement-total">
+          <span class="statement-label">Gross Profit</span>
+          <span class="statement-value" id="s-gross">$0</span>
         </div>
 
-        <div class="form-actions">
-          <button class="btn-primary" id="btn-save-allocation">Save Allocation</button>
+        <div class="statement-divider"></div>
+
+        <!-- Return of Investment -->
+        <div class="statement-section">
+          <div class="statement-row">
+            <span class="statement-label">Return of Investment</span>
+            <span class="statement-value" id="s-recover">—</span>
+          </div>
+          <div id="s-recover-area">
+            <button class="btn-add-inline" id="btn-add-recover">+ Add</button>
+          </div>
+          <div id="form-add-recover" class="inline-add-form" style="display:none">
+            <input type="number" id="recover-amount" placeholder="Amount" min="0" />
+            <button class="btn-primary btn-sm" id="btn-save-recover">Save</button>
+            <button class="btn-secondary btn-sm" id="btn-cancel-recover">Cancel</button>
+          </div>
         </div>
+
+        <!-- My Pay -->
+        <div class="statement-section">
+          <div class="statement-row">
+            <span class="statement-label">My Pay</span>
+            <span class="statement-value" id="s-mypay">$0</span>
+          </div>
+          <div class="statement-note">minimum salary — edit in Settings</div>
+        </div>
+
+        <div class="statement-divider"></div>
+
+        <!-- Savings -->
+        <div class="statement-row statement-total">
+          <span class="statement-label">Savings</span>
+          <span class="statement-value statement-savings-value" id="s-savings">$0</span>
+        </div>
+
+        <div id="s-warning" class="salary-warning" style="display:none; margin-top:12px;">
+          ⚠️ Not enough gross profit to cover Return of Investment + My Pay.
+        </div>
+
       </div>
     </div>
 
@@ -388,13 +429,13 @@
 
   </main>
 
-  <script src="js/db.js?v=12"></script>
-  <script src="js/migrations.js?v=12"></script>
-  <script src="js/pages/dashboard.js?v=12"></script>
-  <script src="js/pages/orders.js?v=12"></script>
-  <script src="js/pages/investments.js?v=12"></script>
-  <script src="js/pages/monthly.js?v=12"></script>
-  <script src="js/pages/settings.js?v=12"></script>
-  <script src="js/app.js?v=12"></script>
+  <script src="js/db.js?v=13"></script>
+  <script src="js/migrations.js?v=13"></script>
+  <script src="js/pages/dashboard.js?v=13"></script>
+  <script src="js/pages/orders.js?v=13"></script>
+  <script src="js/pages/investments.js?v=13"></script>
+  <script src="js/pages/monthly.js?v=13"></script>
+  <script src="js/pages/settings.js?v=13"></script>
+  <script src="js/app.js?v=13"></script>
 </body>
 </html>

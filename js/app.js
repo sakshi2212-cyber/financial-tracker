@@ -15,19 +15,27 @@ function migrateExistingOrders() {
     var toUpdate = orders.filter(function (o) {
       return o.status === 'Paid' || o.status === 'Pending';
     });
-
     if (toUpdate.length === 0) { return; }
-
-    var updates = toUpdate.map(function (o) {
+    toUpdate.forEach(function (o) {
       if (o.status === 'Paid')    { o.status = 'Order Shipped'; }
       if (o.status === 'Pending') { o.status = 'Order Received'; }
-      return AppDB.updateOrder(o);
     });
+    Promise.all(toUpdate.map(function (o) { return AppDB.updateOrder(o); }))
+      .then(function () { renderDashboard(); renderOrders(); });
+  });
+}
 
-    Promise.all(updates).then(function () {
-      renderDashboard();
-      renderOrders();
+function migrateExistingAllocations() {
+  AppDB.getAllAllocations().then(function (allocations) {
+    var toUpdate = allocations.filter(function (a) {
+      return a.roi !== undefined || a.buffer !== undefined || a.forward !== undefined;
     });
+    if (toUpdate.length === 0) { return; }
+    toUpdate.forEach(function (a) {
+      if (a.recover === undefined) { a.recover = a.roi || 0; }
+      delete a.roi; delete a.buffer; delete a.forward;
+    });
+    Promise.all(toUpdate.map(function (a) { return AppDB.saveAllocation(a); }));
   });
 }
 
@@ -56,3 +64,4 @@ document.querySelectorAll('.nav-links a').forEach(function (link) {
 // Render dashboard on first load, then check for data to migrate
 renderDashboard();
 migrateExistingOrders();
+migrateExistingAllocations();

@@ -479,6 +479,217 @@ body {
   margin-bottom: 16px;
 }
 
+/* ── Monthly Statement Card ── */
+.statement-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  max-width: 500px;
+}
+
+.statement-section  { padding: 2px 0; }
+
+.statement-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.statement-label {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.statement-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.statement-note {
+  font-size: 0.78rem;
+  color: #bbb;
+  margin-top: -4px;
+  margin-bottom: 6px;
+}
+
+.statement-divider {
+  height: 1px;
+  background: #f0f0f0;
+  margin: 6px 0;
+}
+
+.statement-total .statement-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--purple-heading);
+}
+
+.statement-total .statement-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--purple-heading);
+}
+
+.statement-savings-value {
+  font-size: 1.1rem !important;
+  color: #059669 !important;
+}
+
+/* ── Statement sublist (material costs) ── */
+.statement-sublist { margin: 4px 0 6px 0; }
+
+.sublist-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 0.83rem;
+  color: #666;
+  gap: 8px;
+}
+
+.sublist-desc   { flex: 1; }
+.sublist-right  { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.sublist-amount { font-weight: 600; color: #444; min-width: 50px; text-align: right; }
+
+.btn-sublist-edit,
+.btn-sublist-delete,
+.btn-sublist-save,
+.btn-sublist-cancel {
+  background: none;
+  border: 1px solid #DDD6FE;
+  color: var(--purple-bright);
+  padding: 2px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.btn-sublist-delete { border-color: #fecaca; color: #DC2626; }
+.btn-sublist-edit:hover,
+.btn-sublist-save:hover   { background: var(--purple-light); }
+.btn-sublist-delete:hover { background: #fee2e2; }
+.btn-sublist-cancel:hover { background: #f5f5f5; }
+
+.inline-edit-text {
+  flex: 1;
+  min-width: 120px;
+  padding: 4px 8px;
+  border: 1.5px solid #DDD6FE;
+  border-radius: 8px;
+  font-size: 0.83rem;
+  outline: none;
+}
+
+.inline-edit-num {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1.5px solid #DDD6FE;
+  border-radius: 8px;
+  font-size: 0.83rem;
+  outline: none;
+}
+
+/* ── Inline add form ── */
+.btn-add-inline {
+  background: none;
+  border: 1.5px dashed #C4B5FD;
+  color: var(--purple-bright);
+  padding: 4px 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 500;
+  margin-top: 4px;
+  transition: background 0.15s;
+}
+
+.btn-add-inline:hover { background: var(--purple-light); }
+
+.inline-add-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.inline-add-form input[type="text"] {
+  flex: 1;
+  min-width: 140px;
+  padding: 6px 10px;
+  border: 1.5px solid #DDD6FE;
+  border-radius: 10px;
+  font-size: 0.83rem;
+  outline: none;
+}
+
+.inline-add-form input[type="number"] {
+  width: 100px;
+  padding: 6px 10px;
+  border: 1.5px solid #DDD6FE;
+  border-radius: 10px;
+  font-size: 0.83rem;
+  outline: none;
+}
+
+.inline-add-form input:focus { border-color: var(--purple-bright); }
+
+.btn-sm {
+  padding: 6px 14px !important;
+  font-size: 0.8rem !important;
+  border-radius: 14px !important;
+}
+
+/* ── Recovery progress card (Investments page) ── */
+.recovery-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px 24px 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+}
+
+.recovery-row {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 14px;
+}
+
+.recovery-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--purple-heading);
+  margin-top: 4px;
+}
+
+.recovery-bar-bg {
+  height: 8px;
+  background: var(--purple-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.recovery-bar-fill {
+  height: 100%;
+  background: var(--purple-bright);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+.recovery-pct {
+  font-size: 0.78rem;
+  color: var(--purple-bright);
+  font-weight: 600;
+  margin-top: 6px;
+}
+
 /* ── Mobile Responsive ── */
 @media (max-width: 768px) {
   body {

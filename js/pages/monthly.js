@@ -1,7 +1,7 @@
-// monthly.js — month navigation, income calculation, allocation form
+// monthly.js — redesigned monthly summary: income, material costs, recovery, my pay, savings
 
 var viewedYear  = new Date().getFullYear();
-var viewedMonth = new Date().getMonth(); // 0 = January, 11 = December
+var viewedMonth = new Date().getMonth();
 
 var MONTH_NAMES = [
   'January','February','March','April','May','June',
@@ -17,61 +17,180 @@ function updateMonthLabel() {
     MONTH_NAMES[viewedMonth] + ' ' + viewedYear;
 }
 
+function fmt(n) { return '$' + (n || 0).toLocaleString('en-US'); }
+
+// ── Render ─────────────────────────────────────────────────────────────────
+
 function renderMonthly() {
   var monthKey = getMonthKey();
-  var prefix   = monthKey + '-'; // e.g. "2026-09-"
+  var prefix   = monthKey + '-';
+  var myPay    = parseFloat(localStorage.getItem('minSalary')) || 0;
+
+  document.getElementById('s-mypay').textContent = fmt(myPay);
 
   Promise.all([
     AppDB.getOrders(),
+    AppDB.getInvestments(),
     AppDB.getAllocation(monthKey)
   ]).then(function (results) {
-    var orders     = results[0];
-    var allocation = results[1];
+    var orders      = results[0];
+    var investments = results[1];
+    var allocation  = results[2];
 
-    // Sum paid orders whose date starts with this month
-    var totalIncome = orders
-      .filter(function (o) { return isPaid(o.status) && o.date.startsWith(prefix); })
-      .reduce(function (sum, o) { return sum + o.amount; }, 0);
+    // Income — Payment Complete, In Progress, Order Shipped
+    var paidOrders = orders.filter(function (o) {
+      return isPaid(o.status) && o.date.startsWith(prefix);
+    });
+    var income = paidOrders.reduce(function (s, o) { return s + o.amount; }, 0);
+    document.getElementById('s-income').textContent      = fmt(income);
+    document.getElementById('s-income-note').textContent =
+      'from ' + paidOrders.length + ' paid order' + (paidOrders.length !== 1 ? 's' : '');
 
-    // Store raw value on the element so recalculate can read it
-    var incomeEl = document.getElementById('monthly-income');
-    incomeEl.textContent  = '$' + totalIncome.toLocaleString('en-US');
-    incomeEl.dataset.raw  = totalIncome;
+    // Material costs for this month
+    var materials = investments.filter(function (i) {
+      return i.category === 'Materials' && i.date && i.date.startsWith(prefix);
+    });
+    renderMaterials(materials);
 
-    // Populate allocation fields from saved data (or clear them)
-    document.getElementById('alloc-roi').value     = allocation ? allocation.roi     : '';
-    document.getElementById('alloc-buffer').value  = allocation ? allocation.buffer  : '';
-    document.getElementById('alloc-forward').value = allocation ? allocation.forward : '';
+    var matTotal = materials.reduce(function (s, i) { return s + i.amount; }, 0);
+    document.getElementById('s-mat-total').textContent = fmt(matTotal);
 
-    recalculatePersonalIncome();
+    // Gross profit
+    var gross = income - matTotal;
+    document.getElementById('s-gross').textContent = fmt(gross);
+
+    // Recovery
+    var recover = allocation ? (allocation.recover || 0) : 0;
+    document.getElementById('s-recover').textContent = recover > 0 ? fmt(recover) : '—';
+    document.getElementById('btn-add-recover').textContent = recover > 0 ? 'Edit' : '+ Add';
+    if (recover > 0) {
+      document.getElementById('recover-amount').value = recover;
+    }
+
+    // Savings
+    var savings = gross - recover - myPay;
+    var savingsEl = document.getElementById('s-savings');
+    savingsEl.textContent  = fmt(savings);
+    savingsEl.style.color  = savings < 0 ? '#DC2626' : '#059669';
+
+    // Warning
+    var warning = document.getElementById('s-warning');
+    warning.style.display = (savings < 0) ? 'block' : 'none';
   });
 }
 
-function recalculatePersonalIncome() {
-  var totalIncome = parseFloat(document.getElementById('monthly-income').dataset.raw) || 0;
-  var roi         = parseFloat(document.getElementById('alloc-roi').value)    || 0;
-  var buffer      = parseFloat(document.getElementById('alloc-buffer').value) || 0;
-  var forward     = parseFloat(document.getElementById('alloc-forward').value)|| 0;
+// ── Materials list ──────────────────────────────────────────────────────────
 
-  var allocated = roi + buffer + forward;
-  var personal  = totalIncome - allocated;
+function renderMaterials(materials) {
+  var list = document.getElementById('s-materials-list');
+  list.innerHTML = '';
 
-  document.getElementById('monthly-allocated').textContent   = '$' + allocated.toLocaleString('en-US');
-  document.getElementById('monthly-unallocated').textContent = '$' + Math.max(0, personal).toLocaleString('en-US');
+  materials.forEach(function (inv) {
+    var row = document.createElement('div');
+    row.className = 'sublist-row';
+    row.dataset.id = inv.id;
 
-  var personalEl = document.getElementById('alloc-personal');
-  personalEl.textContent  = '$' + personal.toLocaleString('en-US');
-  personalEl.style.color  = personal < 0 ? '#c0392b' : '#155724';
+    row.innerHTML =
+      '<span class="sublist-desc">' + (inv.description || 'Material') + '</span>' +
+      '<span class="sublist-right">' +
+        '<span class="sublist-amount">' + fmt(inv.amount) + '</span>' +
+        '<button class="btn-sublist-edit">Edit</button>' +
+        '<button class="btn-sublist-delete">✕</button>' +
+      '</span>';
 
-  var minSalary = parseFloat(localStorage.getItem('minSalary')) || 0;
-  var warning   = document.getElementById('salary-warning');
-  if (minSalary > 0 && personal < minSalary) {
-    document.getElementById('salary-warning-amount').textContent = minSalary.toLocaleString('en-US');
-    warning.style.display = 'block';
-  } else {
-    warning.style.display = 'none';
-  }
+    row.querySelector('.btn-sublist-edit').addEventListener('click', function () {
+      openMaterialEdit(row, inv);
+    });
+
+    row.querySelector('.btn-sublist-delete').addEventListener('click', function () {
+      AppDB.deleteInvestment(inv.id).then(function () { renderMonthly(); });
+    });
+
+    list.appendChild(row);
+  });
 }
+
+function openMaterialEdit(row, inv) {
+  row.innerHTML =
+    '<input class="inline-edit-text" type="text" value="' + (inv.description || '') + '" />' +
+    '<span class="sublist-right">' +
+      '<input class="inline-edit-num" type="number" value="' + inv.amount + '" min="0" />' +
+      '<button class="btn-sublist-save">Save</button>' +
+      '<button class="btn-sublist-cancel">Cancel</button>' +
+    '</span>';
+
+  row.querySelector('.btn-sublist-save').addEventListener('click', function () {
+    inv.description = row.querySelector('.inline-edit-text').value.trim();
+    inv.amount      = parseFloat(row.querySelector('.inline-edit-num').value) || 0;
+    AppDB.updateInvestment(inv).then(function () { renderMonthly(); });
+  });
+
+  row.querySelector('.btn-sublist-cancel').addEventListener('click', function () {
+    renderMonthly();
+  });
+}
+
+// ── Add material cost ───────────────────────────────────────────────────────
+
+document.getElementById('btn-add-material').addEventListener('click', function () {
+  document.getElementById('form-add-material').style.display = 'flex';
+  this.style.display = 'none';
+  document.getElementById('mat-desc').focus();
+});
+
+document.getElementById('btn-cancel-material').addEventListener('click', function () {
+  document.getElementById('form-add-material').style.display = 'none';
+  document.getElementById('btn-add-material').style.display  = 'inline-block';
+  document.getElementById('mat-desc').value    = '';
+  document.getElementById('mat-amount').value  = '';
+});
+
+document.getElementById('btn-save-material').addEventListener('click', function () {
+  var desc   = document.getElementById('mat-desc').value.trim();
+  var amount = parseFloat(document.getElementById('mat-amount').value);
+
+  if (isNaN(amount) || amount <= 0) {
+    alert('Please enter a valid amount.');
+    return;
+  }
+
+  // Use 1st of the viewed month so materials show in the right month
+  var dateStr = getMonthKey() + '-01';
+
+  AppDB.addInvestment({
+    date:        dateStr,
+    category:    'Materials',
+    description: desc || 'Material cost',
+    amount:      amount
+  }).then(function () {
+    document.getElementById('mat-desc').value   = '';
+    document.getElementById('mat-amount').value = '';
+    document.getElementById('form-add-material').style.display = 'none';
+    document.getElementById('btn-add-material').style.display  = 'inline-block';
+    renderMonthly();
+  });
+});
+
+// ── Add / edit recovery ─────────────────────────────────────────────────────
+
+document.getElementById('btn-add-recover').addEventListener('click', function () {
+  document.getElementById('form-add-recover').style.display = 'flex';
+  document.getElementById('recover-amount').focus();
+});
+
+document.getElementById('btn-cancel-recover').addEventListener('click', function () {
+  document.getElementById('form-add-recover').style.display = 'none';
+});
+
+document.getElementById('btn-save-recover').addEventListener('click', function () {
+  var amount = parseFloat(document.getElementById('recover-amount').value) || 0;
+  AppDB.saveAllocation({ monthKey: getMonthKey(), recover: amount }).then(function () {
+    document.getElementById('form-add-recover').style.display = 'none';
+    renderMonthly();
+  });
+});
+
+// ── Month navigation ────────────────────────────────────────────────────────
 
 document.getElementById('btn-prev-month').addEventListener('click', function () {
   viewedMonth -= 1;
@@ -85,25 +204,6 @@ document.getElementById('btn-next-month').addEventListener('click', function () 
   if (viewedMonth > 11) { viewedMonth = 0; viewedYear += 1; }
   updateMonthLabel();
   renderMonthly();
-});
-
-['alloc-roi', 'alloc-buffer', 'alloc-forward'].forEach(function (id) {
-  document.getElementById(id).addEventListener('input', recalculatePersonalIncome);
-});
-
-document.getElementById('btn-save-allocation').addEventListener('click', function () {
-  var allocation = {
-    monthKey: getMonthKey(),
-    roi:      parseFloat(document.getElementById('alloc-roi').value)     || 0,
-    buffer:   parseFloat(document.getElementById('alloc-buffer').value)  || 0,
-    forward:  parseFloat(document.getElementById('alloc-forward').value) || 0
-  };
-
-  AppDB.saveAllocation(allocation).then(function () {
-    var btn = document.getElementById('btn-save-allocation');
-    btn.textContent = 'Saved!';
-    setTimeout(function () { btn.textContent = 'Save Allocation'; }, 2000);
-  });
 });
 
 updateMonthLabel();

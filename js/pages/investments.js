@@ -1,7 +1,25 @@
-// investments.js — investments table rendering and form handling
+// investments.js — investments table and recovery progress tracker
 
 function renderInvestments() {
-  AppDB.getInvestments().then(function (investments) {
+  AppDB.getAllData().then(function (data) {
+    var investments = data.investments;
+    var allocations = data.monthlyAllocations;
+
+    // ── Recovery progress ─────────────────────────────────────────────────
+
+    var totalInvested = investments.reduce(function (s, i) { return s + i.amount; }, 0);
+    var totalReturned = allocations.reduce(function (s, a) { return s + (a.recover || 0); }, 0);
+    var stillToRecover = Math.max(0, totalInvested - totalReturned);
+    var pct = totalInvested > 0 ? Math.min(100, Math.round((totalReturned / totalInvested) * 100)) : 0;
+
+    document.getElementById('inv-total-invested').textContent   = '$' + totalInvested.toLocaleString('en-US');
+    document.getElementById('inv-total-returned').textContent   = '$' + totalReturned.toLocaleString('en-US');
+    document.getElementById('inv-still-to-recover').textContent = '$' + stillToRecover.toLocaleString('en-US');
+    document.getElementById('inv-recovery-bar').style.width     = pct + '%';
+    document.getElementById('inv-recovery-pct').textContent     = pct + '% recovered';
+
+    // ── Investments table ─────────────────────────────────────────────────
+
     var tbody = document.getElementById('investments-tbody');
     tbody.innerHTML = '';
 
@@ -44,20 +62,16 @@ document.getElementById('btn-save-investment').addEventListener('click', functio
     return;
   }
 
-  var investment = {
+  AppDB.addInvestment({
     date:        date,
     category:    document.getElementById('investment-category').value,
     description: document.getElementById('investment-description').value.trim(),
     amount:      amount
-  };
-
-  AppDB.addInvestment(investment).then(function () {
+  }).then(function () {
     document.getElementById('investment-description').value = '';
     document.getElementById('investment-amount').value      = '';
-
-    document.getElementById('form-add-investment').style.display       = 'none';
-    document.getElementById('btn-show-investment-form').style.display  = 'inline-block';
-
+    document.getElementById('form-add-investment').style.display      = 'none';
+    document.getElementById('btn-show-investment-form').style.display = 'inline-block';
     renderInvestments();
   });
 });

@@ -105,13 +105,25 @@ var AppDB = (function () {
   }
 
   return {
-    addOrder:        function (o) { return addRecord('orders', o); },
-    updateOrder:     function (o) { return putRecord('orders', o); },
-    getOrders:       function () { return getAllRecords('orders'); },
-    addInvestment:   function (i) { return addRecord('investments', i); },
-    getInvestments:  function () { return getAllRecords('investments'); },
-    saveAllocation:  function (a) { return putRecord('monthlyAllocations', a); },
-    getAllocation:    function (monthKey) { return getRecord('monthlyAllocations', monthKey); },
+    addOrder:          function (o) { return addRecord('orders', o); },
+    updateOrder:       function (o) { return putRecord('orders', o); },
+    getOrders:         function () { return getAllRecords('orders'); },
+    addInvestment:     function (i) { return addRecord('investments', i); },
+    updateInvestment:  function (i) { return putRecord('investments', i); },
+    deleteInvestment:  function (id) {
+      return open().then(function (db) {
+        return new Promise(function (resolve, reject) {
+          var tx  = db.transaction('investments', 'readwrite');
+          var req = tx.objectStore('investments').delete(id);
+          req.onsuccess = function () { resolve(); };
+          req.onerror   = function () { reject(req.error); };
+        });
+      });
+    },
+    getInvestments:    function () { return getAllRecords('investments'); },
+    saveAllocation:    function (a) { return putRecord('monthlyAllocations', a); },
+    getAllocation:     function (monthKey) { return getRecord('monthlyAllocations', monthKey); },
+    getAllAllocations: function () { return getAllRecords('monthlyAllocations'); },
 
     getAllData: function () {
       return Promise.all([
