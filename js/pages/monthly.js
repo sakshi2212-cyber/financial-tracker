@@ -67,15 +67,58 @@ function renderMonthly() {
       document.getElementById('recover-amount').value = recover;
     }
 
-    // Savings
+    // Savings (this month)
     var savings = gross - recover - myPay;
     var savingsEl = document.getElementById('s-savings');
-    savingsEl.textContent  = fmt(savings);
-    savingsEl.style.color  = savings < 0 ? '#DC2626' : '#059669';
+    savingsEl.textContent = fmt(savings);
+    savingsEl.style.color = savings < 0 ? '#DC2626' : '#059669';
 
     // Warning
-    var warning = document.getElementById('s-warning');
-    warning.style.display = (savings < 0) ? 'block' : 'none';
+    document.getElementById('s-warning').style.display = (savings < 0) ? 'block' : 'none';
+
+    // Previous savings + total — needs all data
+    Promise.all([
+      AppDB.getOrders(),
+      AppDB.getInvestments(),
+      AppDB.getAllAllocations()
+    ]).then(function (r) {
+      var allOrders      = r[0];
+      var allInvestments = r[1];
+      var allAllocations = r[2];
+
+      var allocMap = {};
+      allAllocations.forEach(function (a) { allocMap[a.monthKey] = a; });
+
+      var monthSet = {};
+      allOrders.forEach(function (o)      { if (o.date) { monthSet[o.date.substring(0, 7)] = true; } });
+      allInvestments.forEach(function (i) { if (i.date) { monthSet[i.date.substring(0, 7)] = true; } });
+      allAllocations.forEach(function (a) { monthSet[a.monthKey] = true; });
+
+      function calcSavings(mk) {
+        var pfx  = mk + '-';
+        var mInc = allOrders.filter(function (o) { return isPaid(o.status) && o.date.startsWith(pfx); })
+                            .reduce(function (s, o) { return s + o.amount; }, 0);
+        var mMat = allInvestments.filter(function (i) { return i.category === 'Materials' && i.date && i.date.startsWith(pfx); })
+                                 .reduce(function (s, i) { return s + i.amount; }, 0);
+        var mRec = (allocMap[mk] || {}).recover || 0;
+        return mInc - mMat - mRec - myPay;
+      }
+
+      // Previous months only (monthKey strictly before current)
+      var prevBalance = Object.keys(monthSet)
+        .filter(function (mk) { return mk < monthKey; })
+        .reduce(function (sum, mk) { return sum + calcSavings(mk); }, 0);
+
+      var totalBalance = prevBalance + savings;
+
+      var prevEl = document.getElementById('s-prev-balance');
+      prevEl.textContent = fmt(prevBalance);
+      prevEl.style.color = prevBalance < 0 ? '#DC2626' : '#059669';
+
+      var totalEl = document.getElementById('s-savings-balance');
+      totalEl.textContent = fmt(totalBalance);
+      totalEl.style.color = totalBalance < 0 ? '#DC2626' : '#059669';
+    });
   });
 }
 

@@ -290,6 +290,17 @@
 
       <div class="statement-card">
 
+        <!-- Previous Savings Balance -->
+        <div class="statement-row">
+          <div>
+            <span class="statement-label" style="font-weight:700; color:var(--purple-heading);">Previous Savings Balance</span>
+            <div class="statement-note">accumulated from previous months</div>
+          </div>
+          <span class="statement-value" id="s-prev-balance" style="font-size:1.1rem; font-weight:700; color:#059669;">$0</span>
+        </div>
+
+        <div class="statement-divider"></div>
+
         <!-- Income -->
         <div class="statement-section">
           <div class="statement-row">
@@ -354,7 +365,7 @@
 
         <div class="statement-divider"></div>
 
-        <!-- Savings -->
+        <!-- Savings (this month) -->
         <div class="statement-row statement-total">
           <span class="statement-label">Savings</span>
           <span class="statement-value statement-savings-value" id="s-savings">$0</span>
@@ -362,6 +373,17 @@
 
         <div id="s-warning" class="salary-warning" style="display:none; margin-top:12px;">
           ⚠️ Not enough gross profit to cover Return of Investment + My Pay.
+        </div>
+
+        <div class="statement-divider" style="margin-top:12px;"></div>
+
+        <!-- Total Savings Balance (previous + this month) -->
+        <div class="statement-row statement-total">
+          <div>
+            <span class="statement-label">Total Savings</span>
+            <div class="statement-note">previous balance + this month</div>
+          </div>
+          <span class="statement-value statement-savings-value" id="s-savings-balance">$0</span>
         </div>
 
       </div>
@@ -429,13 +451,13 @@
 
   </main>
 
-  <script src="js/db.js?v=13"></script>
-  <script src="js/migrations.js?v=13"></script>
-  <script src="js/pages/dashboard.js?v=13"></script>
-  <script src="js/pages/orders.js?v=13"></script>
-  <script src="js/pages/investments.js?v=13"></script>
-  <script src="js/pages/monthly.js?v=13"></script>
-  <script src="js/pages/settings.js?v=13"></script>
-  <script src="js/app.js?v=13"></script>
+  <script src="js/db.js?v=15"></script>
+  <script src="js/migrations.js?v=15"></script>
+  <script src="js/pages/dashboard.js?v=15"></script>
+  <script src="js/pages/orders.js?v=15"></script>
+  <script src="js/pages/investments.js?v=15"></script>
+  <script src="js/pages/monthly.js?v=15"></script>
+  <script src="js/pages/settings.js?v=15"></script>
+  <script src="js/app.js?v=15"></script>
 </body>
 </html>
