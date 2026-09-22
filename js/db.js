@@ -1,24 +1,16 @@
 // db.js — IndexedDB setup and all database operations
-//
-// Why the module pattern (var AppDB = function(){ ... }())?
-// It keeps internal variables (_db, open, etc.) private. Only the
-// functions listed in the final `return` block are accessible outside.
 
 var AppDB = (function () {
-  var DB_NAME = 'sticker-tracker';
-  var DB_VERSION = 1;
-  var _db = null;
+  var DB_NAME    = 'sticker-tracker';
+  var DB_VERSION = 2; // bumped to add materialCosts store
+  var _db        = null;
 
-  // Opens the database connection. If already open, returns it immediately.
-  // Creates the object stores (like tables) the first time the app ever runs.
   function open() {
     return new Promise(function (resolve, reject) {
       if (_db) { resolve(_db); return; }
 
       var request = indexedDB.open(DB_NAME, DB_VERSION);
 
-      // onupgradeneeded fires when the database is created for the first time,
-      // or when DB_VERSION is bumped. This is where we define the schema.
       request.onupgradeneeded = function (event) {
         var db = event.target.result;
 
@@ -33,19 +25,18 @@ var AppDB = (function () {
         }
 
         if (!db.objectStoreNames.contains('monthlyAllocations')) {
-          // monthKey is a string like "2026-09" — unique per month, used as the key
           db.createObjectStore('monthlyAllocations', { keyPath: 'monthKey' });
+        }
+
+        // New in v2: material costs are separate from investments
+        if (!db.objectStoreNames.contains('materialCosts')) {
+          var mcStore = db.createObjectStore('materialCosts', { keyPath: 'id', autoIncrement: true });
+          mcStore.createIndex('monthKey', 'monthKey', { unique: false });
         }
       };
 
-      request.onsuccess = function (event) {
-        _db = event.target.result;
-        resolve(_db);
-      };
-
-      request.onerror = function (event) {
-        reject(event.target.error);
-      };
+      request.onsuccess = function (event) { _db = event.target.result; resolve(_db); };
+      request.onerror   = function (event) { reject(event.target.error); };
     });
   }
 
@@ -55,7 +46,7 @@ var AppDB = (function () {
         var tx = db.transaction(storeName, 'readwrite');
         var req = tx.objectStore(storeName).add(record);
         req.onsuccess = function () { resolve(req.result); };
-        req.onerror = function () { reject(req.error); };
+        req.onerror   = function () { reject(req.error); };
       });
     });
   }
@@ -66,7 +57,7 @@ var AppDB = (function () {
         var tx = db.transaction(storeName, 'readwrite');
         var req = tx.objectStore(storeName).put(record);
         req.onsuccess = function () { resolve(req.result); };
-        req.onerror = function () { reject(req.error); };
+        req.onerror   = function () { reject(req.error); };
       });
     });
   }
@@ -77,7 +68,7 @@ var AppDB = (function () {
         var tx = db.transaction(storeName, 'readonly');
         var req = tx.objectStore(storeName).getAll();
         req.onsuccess = function () { resolve(req.result); };
-        req.onerror = function () { reject(req.error); };
+        req.onerror   = function () { reject(req.error); };
       });
     });
   }
@@ -88,7 +79,18 @@ var AppDB = (function () {
         var tx = db.transaction(storeName, 'readonly');
         var req = tx.objectStore(storeName).get(key);
         req.onsuccess = function () { resolve(req.result || null); };
-        req.onerror = function () { reject(req.error); };
+        req.onerror   = function () { reject(req.error); };
+      });
+    });
+  }
+
+  function deleteRecord(storeName, id) {
+    return open().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var tx  = db.transaction(storeName, 'readwrite');
+        var req = tx.objectStore(storeName).delete(id);
+        req.onsuccess = function () { resolve(); };
+        req.onerror   = function () { reject(req.error); };
       });
     });
   }
@@ -96,42 +98,45 @@ var AppDB = (function () {
   function clearStore(storeName) {
     return open().then(function (db) {
       return new Promise(function (resolve, reject) {
-        var tx = db.transaction(storeName, 'readwrite');
+        var tx  = db.transaction(storeName, 'readwrite');
         var req = tx.objectStore(storeName).clear();
         req.onsuccess = function () { resolve(); };
-        req.onerror = function () { reject(req.error); };
+        req.onerror   = function () { reject(req.error); };
       });
     });
   }
 
   return {
-    addOrder:          function (o) { return addRecord('orders', o); },
-    updateOrder:       function (o) { return putRecord('orders', o); },
-    getOrders:         function () { return getAllRecords('orders'); },
-    addInvestment:     function (i) { return addRecord('investments', i); },
-    updateInvestment:  function (i) { return putRecord('investments', i); },
-    deleteInvestment:  function (id) {
-      return open().then(function (db) {
-        return new Promise(function (resolve, reject) {
-          var tx  = db.transaction('investments', 'readwrite');
-          var req = tx.objectStore('investments').delete(id);
-          req.onsuccess = function () { resolve(); };
-          req.onerror   = function () { reject(req.error); };
-        });
-      });
-    },
-    getInvestments:    function () { return getAllRecords('investments'); },
-    saveAllocation:    function (a) { return putRecord('monthlyAllocations', a); },
-    getAllocation:     function (monthKey) { return getRecord('monthlyAllocations', monthKey); },
-    getAllAllocations: function () { return getAllRecords('monthlyAllocations'); },
+    // Orders
+    addOrder:         function (o)  { return addRecord('orders', o); },
+    updateOrder:      function (o)  { return putRecord('orders', o); },
+    getOrders:        function ()   { return getAllRecords('orders'); },
+
+    // Investments (capital tracking)
+    addInvestment:    function (i)  { return addRecord('investments', i); },
+    updateInvestment: function (i)  { return putRecord('investments', i); },
+    deleteInvestment: function (id) { return deleteRecord('investments', id); },
+    getInvestments:   function ()   { return getAllRecords('investments'); },
+
+    // Monthly allocations
+    saveAllocation:    function (a)   { return putRecord('monthlyAllocations', a); },
+    getAllocation:      function (key) { return getRecord('monthlyAllocations', key); },
+    getAllAllocations:  function ()    { return getAllRecords('monthlyAllocations'); },
+
+    // Material costs (separate from investments, for production cost tracking)
+    addMaterialCost:    function (mc)  { return addRecord('materialCosts', mc); },
+    updateMaterialCost: function (mc)  { return putRecord('materialCosts', mc); },
+    deleteMaterialCost: function (id)  { return deleteRecord('materialCosts', id); },
+    getMaterialCosts:   function ()    { return getAllRecords('materialCosts'); },
 
     getAllData: function () {
       return Promise.all([
         getAllRecords('orders'),
         getAllRecords('investments'),
-        getAllRecords('monthlyAllocations')
-      ]).then(function (results) {
-        return { orders: results[0], investments: results[1], monthlyAllocations: results[2] };
+        getAllRecords('monthlyAllocations'),
+        getAllRecords('materialCosts')
+      ]).then(function (r) {
+        return { orders: r[0], investments: r[1], monthlyAllocations: r[2], materialCosts: r[3] };
       });
     },
 
@@ -139,12 +144,14 @@ var AppDB = (function () {
       return Promise.all([
         clearStore('orders'),
         clearStore('investments'),
-        clearStore('monthlyAllocations')
+        clearStore('monthlyAllocations'),
+        clearStore('materialCosts')
       ]).then(function () {
         var tasks = [];
-        data.orders.forEach(function (r) { tasks.push(putRecord('orders', r)); });
-        data.investments.forEach(function (r) { tasks.push(putRecord('investments', r)); });
+        data.orders.forEach(function (r)             { tasks.push(putRecord('orders', r)); });
+        data.investments.forEach(function (r)        { tasks.push(putRecord('investments', r)); });
         data.monthlyAllocations.forEach(function (r) { tasks.push(putRecord('monthlyAllocations', r)); });
+        (data.materialCosts || []).forEach(function (r) { tasks.push(putRecord('materialCosts', r)); });
         return Promise.all(tasks);
       });
     }

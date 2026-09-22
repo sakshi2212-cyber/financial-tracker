@@ -1,6 +1,6 @@
 // migrations.js — JSON schema versioning and backwards-compatible import
 
-var SCHEMA_VERSION = 3;
+var SCHEMA_VERSION = 4;
 
 var Migrations = (function () {
 
@@ -9,6 +9,7 @@ var Migrations = (function () {
     if (version < 1) { data = toV1(data); }
     if (version < 2) { data = toV2(data); }
     if (version < 3) { data = toV3(data); }
+    if (version < 4) { data = toV4(data); }
     return data;
   }
 
@@ -56,6 +57,14 @@ var Migrations = (function () {
       };
     });
     data.version = 3;
+    return data;
+  }
+
+  // V4: materialCosts is now a separate store from investments
+  // Old exports won't have materialCosts — just ensure the key exists as empty array
+  function toV4(data) {
+    if (!Array.isArray(data.materialCosts)) { data.materialCosts = []; }
+    data.version = 4;
     return data;
   }
 

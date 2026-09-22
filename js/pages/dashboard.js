@@ -41,10 +41,11 @@ function renderChart(months, incomeData, costData) {
 
 function renderDashboard() {
   AppDB.getAllData().then(function (data) {
-    var orders      = data.orders;
-    var investments = data.investments;
-    var allocations = data.monthlyAllocations;
-    var myPay       = parseFloat(localStorage.getItem('minSalary')) || 0;
+    var orders        = data.orders;
+    var investments   = data.investments;
+    var allocations   = data.monthlyAllocations;
+    var materialCosts = data.materialCosts || [];
+    var myPay         = parseFloat(localStorage.getItem('minSalary')) || 0;
 
     // ── Summary cards ─────────────────────────────────────────────────────
 
@@ -64,8 +65,8 @@ function renderDashboard() {
     allocations.forEach(function (a) { allocMap[a.monthKey] = a; });
 
     var monthSet = {};
-    orders.forEach(function (o) { if (o.date) { monthSet[o.date.substring(0, 7)] = true; } });
-    investments.forEach(function (i) { if (i.date) { monthSet[i.date.substring(0, 7)] = true; } });
+    orders.forEach(function (o)      { if (o.date) { monthSet[o.date.substring(0, 7)] = true; } });
+    materialCosts.forEach(function (mc) { monthSet[mc.monthKey] = true; });
     allocations.forEach(function (a) { monthSet[a.monthKey] = true; });
 
     var months = Object.keys(monthSet).sort().reverse();
@@ -76,8 +77,8 @@ function renderDashboard() {
       var prefix     = monthKey + '-';
       var mIncome    = orders.filter(function (o) { return isPaid(o.status) && o.date.startsWith(prefix); })
                              .reduce(function (s, o) { return s + o.amount; }, 0);
-      var mMatCosts  = investments.filter(function (i) { return i.category === 'Materials' && i.date && i.date.startsWith(prefix); })
-                                  .reduce(function (s, i) { return s + i.amount; }, 0);
+      var mMatCosts  = materialCosts.filter(function (mc) { return mc.monthKey === monthKey; })
+                                  .reduce(function (s, mc) { return s + mc.amount; }, 0);
       var mRecover   = (allocMap[monthKey] || {}).recover || 0;
       return sum + (mIncome - mMatCosts - mRecover - myPay);
     }, 0);
@@ -103,8 +104,8 @@ function renderDashboard() {
       var prefix    = monthKey + '-';
       var mIncome   = orders.filter(function (o) { return isPaid(o.status) && o.date.startsWith(prefix); })
                             .reduce(function (s, o) { return s + o.amount; }, 0);
-      var mMatCosts = investments.filter(function (i) { return i.category === 'Materials' && i.date && i.date.startsWith(prefix); })
-                                 .reduce(function (s, i) { return s + i.amount; }, 0);
+      var mMatCosts = materialCosts.filter(function (mc) { return mc.monthKey === monthKey; })
+                                 .reduce(function (s, mc) { return s + mc.amount; }, 0);
       var mGross    = mIncome - mMatCosts;
       var mRecover  = (allocMap[monthKey] || {}).recover || 0;
       var mSavings  = mGross - mRecover - myPay;
@@ -125,8 +126,8 @@ function renderDashboard() {
       var prefix = monthKey + '-';
       chartIncome.push(orders.filter(function (o) { return isPaid(o.status) && o.date.startsWith(prefix); })
                              .reduce(function (s, o) { return s + o.amount; }, 0));
-      chartCosts.push(investments.filter(function (i) { return i.category === 'Materials' && i.date && i.date.startsWith(prefix); })
-                                 .reduce(function (s, i) { return s + i.amount; }, 0));
+      chartCosts.push(materialCosts.filter(function (mc) { return mc.monthKey === monthKey; })
+                                   .reduce(function (s, mc) { return s + mc.amount; }, 0));
     });
 
     renderChart(chartMonths.map(formatMonthKey), chartIncome, chartCosts);
