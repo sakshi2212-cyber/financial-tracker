@@ -1,7 +1,197 @@
 {
-  "orders": [],
-  "investments": [],
-  "monthlyAllocations": [],
-  "version": 2,
-  "publishedAt": "2026-09-21T18:16:04.468Z"
+  "orders": [
+    {
+      "date": "2026-09-18",
+      "customer": "Stall",
+      "description": "Ganesh Event Stand",
+      "amount": 101,
+      "paymentMethod": "Cash",
+      "status": "Order Shipped",
+      "id": 1
+    },
+    {
+      "date": "2026-06-30",
+      "customer": "Josh",
+      "description": "Bundle",
+      "amount": 12,
+      "paymentMethod": "Bank Transfer",
+      "status": "Order Shipped",
+      "id": 2
+    },
+    {
+      "date": "2026-06-30",
+      "customer": "Beth",
+      "description": "Calico Cat Sticker",
+      "amount": 3,
+      "paymentMethod": "Bank Transfer",
+      "status": "Order Shipped",
+      "id": 3
+    },
+    {
+      "date": "2026-07-17",
+      "customer": "Ayush",
+      "description": "One Gandalf Sticker, One No Pain No Quack Sticker",
+      "amount": 7,
+      "paymentMethod": "Cash",
+      "status": "Order Shipped",
+      "id": 4
+    },
+    {
+      "date": "2026-07-22",
+      "customer": "Dr.J",
+      "description": "7 sticker Bundle",
+      "amount": 30,
+      "paymentMethod": "Bank Transfer",
+      "status": "Order Shipped",
+      "id": 5
+    },
+    {
+      "date": "2026-07-23",
+      "customer": "Amrita Gala",
+      "description": "7 sticker Bundle",
+      "amount": 15,
+      "paymentMethod": "Cash",
+      "status": "Order Shipped",
+      "id": 6
+    },
+    {
+      "date": "2026-07-23",
+      "customer": "Corey",
+      "description": "Duck Bundle (3 stickers)",
+      "amount": 9,
+      "paymentMethod": "Bank Transfer",
+      "status": "Order Shipped",
+      "id": 7
+    },
+    {
+      "date": "2026-07-23",
+      "customer": "Red Jen",
+      "description": "Custom Red Robin Stickers",
+      "amount": 20,
+      "paymentMethod": "Cash",
+      "status": "Order Shipped",
+      "id": 8
+    },
+    {
+      "date": "2026-07-23",
+      "customer": "Jennifer Kane",
+      "description": "Buff Goat Jen Stickers",
+      "amount": 20,
+      "paymentMethod": "Cash",
+      "status": "Order Received",
+      "id": 9
+    },
+    {
+      "date": "2026-07-30",
+      "customer": "The Palejas",
+      "description": "Assorted Duck Bundle X 4",
+      "amount": 36,
+      "paymentMethod": "Bank Transfer",
+      "status": "Order Shipped",
+      "id": 10
+    },
+    {
+      "date": "2026-07-23",
+      "customer": "Jennifer Kane",
+      "description": "Assorted Duck Bundle X 2",
+      "amount": 18,
+      "paymentMethod": "Bank Transfer",
+      "status": "Order Shipped",
+      "id": 11
+    },
+    {
+      "date": "2026-07-30",
+      "customer": "Ajay Agrawal",
+      "description": "All stickers (not diwali)",
+      "amount": 25,
+      "paymentMethod": "Cash",
+      "status": "Order Shipped",
+      "id": 12
+    },
+    {
+      "date": "2026-07-31",
+      "customer": "Bitu Didi",
+      "description": "40 total bee stickers",
+      "amount": 80,
+      "paymentMethod": "Cash",
+      "status": "Order Shipped",
+      "id": 13
+    },
+    {
+      "date": "2026-07-31",
+      "customer": "Ruhani",
+      "description": "5 Calico Cat Sticker, 5 Ice Cream Sticker",
+      "amount": 35,
+      "paymentMethod": "Cash",
+      "status": "Order Shipped",
+      "id": 14
+    },
+    {
+      "date": "2026-07-31",
+      "customer": "Christa Howarth",
+      "description": "2 All stickers (not Diwali) ----Payment has been pending for a long time, order complete",
+      "amount": 40,
+      "paymentMethod": "Cash",
+      "status": "In Progress",
+      "id": 15
+    },
+    {
+      "date": "2026-08-27",
+      "customer": "Multiple People",
+      "description": "Stand in Neighborhood --both cash and venmo were used",
+      "amount": 121.5,
+      "paymentMethod": "Bank Transfer",
+      "status": "Order Shipped",
+      "id": 16
+    }
+  ],
+  "investments": [
+    {
+      "date": "2026-12-01",
+      "category": "Initial Setup",
+      "description": "Printer, Cricut, Ink",
+      "amount": 527.31,
+      "id": 1
+    }
+  ],
+  "monthlyAllocations": [
+    {
+      "monthKey": "2026-06",
+      "recover": 0
+    },
+    {
+      "monthKey": "2026-07",
+      "recover": 0
+    },
+    {
+      "monthKey": "2026-08",
+      "recover": 203
+    },
+    {
+      "monthKey": "2026-09",
+      "recover": 0
+    }
+  ],
+  "materialCosts": [
+    {
+      "monthKey": "2026-08",
+      "description": "Ink x2",
+      "amount": 82,
+      "id": 1
+    },
+    {
+      "monthKey": "2026-09",
+      "description": "Ink",
+      "amount": 41,
+      "id": 2
+    },
+    {
+      "monthKey": "2026-09",
+      "description": "Sticker stand",
+      "amount": 40,
+      "id": 3
+    }
+  ],
+  "version": 4,
+  "publishedAt": "2026-09-22T22:24:12.335Z"
 }
